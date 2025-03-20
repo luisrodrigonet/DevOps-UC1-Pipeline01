@@ -1,0 +1,32 @@
+name: Pipeline de Validação de Dados  
+on: [push]  
+
+jobs:  
+  validar-dados:  
+    runs-on: ubuntu-latest  
+    steps:  
+      - name: Baixar Código  
+        uses: actions/checkout@v4  
+
+      - name: Configurar Python  
+        uses: actions/setup-python@v4  
+        with:  
+          python-version: '3.10'  
+
+      - name: Instalar Dependências  
+        run: pip install pandas  
+
+      - name: Validar Dados  
+        run: python validar_dados.py
+        
+      - name: Gerar Relatório  
+        run: |  
+          python gerar_relatorio.py  
+          mv relatorio.html relatorio-${{ github.sha }}.html  
+
+      - name: Upload Relatório  
+        uses: actions/upload-artifact@v3  
+        with:  
+          name: relatorio  
+          path: relatorio-*.html  
+        
